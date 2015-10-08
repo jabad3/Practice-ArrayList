@@ -22,9 +22,10 @@ public class MyArrayList<T> implements Collection<T>, List<T>{
 	//Constructors
 	///////////////////////////////////////////////////////////
 	public MyArrayList() {
-		this.capacity = 11;
-		this.size = 0;
-		array = (T[]) new Object[this.capacity];
+//		this.capacity = 10;
+//		this.size = 0;
+//		array = (T[]) new Object[this.capacity];
+		this(10);
 	}
 	public MyArrayList(int capacity) {
 		this.capacity = capacity;
@@ -39,22 +40,49 @@ public class MyArrayList<T> implements Collection<T>, List<T>{
 	///////////////////////////////////////////////////////////
 	@Override
 	public boolean add(T e) {
-		// TODO Auto-generated method stub
-		return false;
+		//0. No safety checks
+		//1. Check to see if resize is needed
+		resize();
+		//2. Find the index at which to add
+		int index = this.size;
+		//3. Add the object
+		this.array[index] = e;
+		this.size++;
+		return true;
 	}
 	@Override
 	public void add(int index, T element) {
-		// TODO Auto-generated method stub
+		//0. Safety checks
+		if(index<0 || index>size) {
+			throw new IndexOutOfBoundsException();
+		}
+		//1. Check to see if resize is needed
+		resize();	//takes care of range issues
+		
+		T temp;
+		//2. Make space for new object
+		if(size>=index) {
+			forwardShifter(index);
+			this.array[index] = element;
+		} else {
+			this.array[index] = element;
+		}
+		this.size++;
 	}
-	@Override
-	public boolean contains(Object o) {
-		// TODO Auto-generated method stub
-		return false;
+	private void resize() {
+		if(this.size==this.capacity) {
+			System.out.println("resize");
+			this.capacity*=2;
+			array = Arrays.copyOf(array, this.capacity);
+			return;
+		}
+		else return;
 	}
-	@Override
-	public T get(int index) {
-		// TODO Auto-generated method stub
-		return null;
+	private void forwardShifter(int gapIndex) {
+		int tailIndex = this.size;
+		for(;tailIndex>gapIndex;tailIndex--) {
+			array[tailIndex]=array[tailIndex-1];
+		}
 	}
 	@Override
 	public boolean remove(Object o) {
@@ -63,6 +91,16 @@ public class MyArrayList<T> implements Collection<T>, List<T>{
 	}
 	@Override
 	public T remove(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public boolean contains(Object o) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public T get(int index) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -144,26 +182,23 @@ public class MyArrayList<T> implements Collection<T>, List<T>{
 	///////////////////////////////////////////////////////////
 	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.size==0;
 	}
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.size;
 	}
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
+		for(T t : array) {
+			t=null;
+		}
 	}
 	@Override
 	public Object[] toArray() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		return Arrays.copyOf(array, size);	}
 	@Override
 	public <T> T[] toArray(T[] a) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -188,5 +223,9 @@ public class MyArrayList<T> implements Collection<T>, List<T>{
 	///////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////
 	//Testing
-	private T[] getArray() {return array;}
+	private T[] getArray() {return this.array;}
+	private int getCapacity() {return this.capacity;}
+//	private T[] getArray() {return array;}
+//	private T[] getArray() {return array;}
+
 }
